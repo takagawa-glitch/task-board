@@ -22,6 +22,7 @@ task-board は、タスクを登録・管理するタスクボード(カンバ�
 
 ```
 index.html   画面の骨組みと CDN(React / ReactDOM / Babel standalone)の読み込み
+storage.js   localStorage への保存・読み込み(app.jsx より先に読み込む)
 app.jsx      React コンポーネント一式(type="text/babel" で読み込まれる)
 style.css    スタイル定義
 ```
@@ -31,8 +32,13 @@ style.css    スタイル定義
 - 状態を更新する関数(`addTask` / `toggleTask` / `deleteTask`)は `App` に集約し、子コンポーネントには props で渡す
 - 状態は必ず新しい配列・オブジェクトを作って更新する(`map` / `filter` / スプレッド構文)。直接書き換えない
 - 完了済みの表示は `task-done` クラスの付与で切り替え、色やスタイルの指定は CSS 側に置く
+- 永続化は `storage.js` の `TaskStorage`(`load` / `save`)に閉じ込める。キーは `task-board:tasks`
+  - `localStorage` はプライベートモードなどで失敗しうるため、読み書きは必ず `try/catch` で包む
+  - 読み込み時は配列かどうかと各要素の型を検証し、壊れたデータは捨てる(画面を落とさない)
+  - サーバー保存に切り替える場合は `load` / `save` の中身だけを差し替える
+- タスクの読み込みは `useState` の初期化関数で1度だけ行い、保存は `tasks` を依存配列に持つ `useEffect` で行う
+- ID は `createId()` で採番する(同一ミリ秒の連続追加でも重複しないようにしている)
 - 今後の拡張方針:
-  - 永続化は `localStorage` を第一候補とし、保存・読み込みは1つの関数群に閉じ込める(将来サーバー化する際の差し替え点にする)
   - 「未着手 / 進行中 / 完了」のような列(レーン)に広げる場合、列の定義は定数として一箇所にまとめる
   - React 以外の外部ライブラリには依存しない
 

@@ -1,4 +1,12 @@
-const { useState } = React;
+const { useState, useEffect } = React;
+
+// 同じミリ秒に連続で追加しても ID が重複しないようにする
+let lastId = 0;
+const createId = () => {
+  const now = Date.now();
+  lastId = now > lastId ? now : lastId + 1;
+  return lastId;
+};
 
 // タスク1件分の表示(チェックボックス・タイトル・削除ボタン)
 function TaskItem({ task, onToggle, onDelete }) {
@@ -52,12 +60,25 @@ function TaskForm({ onAdd }) {
 
 function App() {
   // タスクは { id, title, done } のオブジェクト配列で保持する
-  const [tasks, setTasks] = useState([]);
+  // 初期値は localStorage から読み込む(初回描画時に1度だけ実行される)
+  const [tasks, setTasks] = useState(() => {
+    const saved = TaskStorage.load();
+    // 保存済みの ID と重複しないように採番の起点を合わせる
+    saved.forEach((task) => {
+      if (task.id > lastId) lastId = task.id;
+    });
+    return saved;
+  });
+
+  // タスクが変わるたびに保存する
+  useEffect(() => {
+    TaskStorage.save(tasks);
+  }, [tasks]);
 
   const addTask = (title) => {
     setTasks((prev) => [
       ...prev,
-      { id: Date.now(), title, done: false },
+      { id: createId(), title, done: false },
     ]);
   };
 
