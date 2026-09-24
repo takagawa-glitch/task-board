@@ -1,0 +1,129 @@
+:root {
+  --bg: #f4f5f7;
+  --panel: #ffffff;
+  --text: #1f2933;
+  --muted: #9aa5b1;
+  --border: #e1e5ea;
+  --accent: #2f6feb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 32px 16px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+}
+
+.board {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px;
+  background: var(--panel);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.board-title {
+  margin: 0 0 20px;
+  font-size: 22px;
+}
+
+/* 追加フォーム */
+.task-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.task-input {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.task-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.add-button,
+.delete-button {
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-button {
+  padding: 10px 18px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.add-button:hover {
+  background: #2558c0;
+}
+
+/* タスク一覧 */
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.task-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  cursor: pointer;
+}
+
+.task-title {
+  font-size: 15px;
+  word-break: break-word;
+}
+
+/* 完了済みのタスクはグレー表示にする */
+.task-done .task-title {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.delete-button {
+  padding: 6px 12px;
+  background: #f0f1f3;
+  color: #626d79;
+}
+
+.delete-button:hover {
+  background: #e2e4e8;
+  color: #c0392b;
+}
+
+.empty-message,
+.task-count {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.task-count {
+  margin: 16px 0 0;
+  text-align: right;
+}
