@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 task-board は、タスクを登録・管理するタスクボード(カンバン形式)のWebアプリケーションです。
 
 - 技術スタック: React 18(CDN 読み込み)+ JSX / CSS。ビルドツールとパッケージマネージャは未導入。
-- 現状: タスクの追加・完了切替・削除ができる最小構成が実装済みです。
+- 現状: タスクの追加・編集・完了切替・削除と、localStorage への保存が実装済みです。
 - 位置づけ: `claludeCodeStudy` 配下の学習用プロジェクトです(同階層の `quiz-app` と同じ構成方針)。
 
 ## 開発コマンド
@@ -27,9 +27,11 @@ app.jsx      React コンポーネント一式(type="text/babel" で読み込ま
 style.css    スタイル定義
 ```
 
-- コンポーネント構成: `App`(状態を保持)→ `TaskForm`(入力・追加)/ `TaskItem`(1件の表示・完了切替・削除)
+- コンポーネント構成: `App`(状態を保持)→ `TaskForm`(入力・追加)/ `TaskItem`(1件の表示・編集・完了切替・削除)
 - タスクは `{ id, title, done }` のオブジェクト配列として `App` の `useState` で保持する
-- 状態を更新する関数(`addTask` / `toggleTask` / `deleteTask`)は `App` に集約し、子コンポーネントには props で渡す
+- 状態を更新する関数(`addTask` / `editTask` / `toggleTask` / `deleteTask`)は `App` に集約し、子コンポーネントには props で渡す
+- 「編集中かどうか」「入力途中の文字列」のような1件内だけの UI 状態は `TaskItem` 自身の `useState` で持つ(タスクデータには含めない)
+  - 編集は「編集」ボタンで開始し、Enter/保存で確定、Escape/キャンセルで破棄する。空欄では保存できない
 - 状態は必ず新しい配列・オブジェクトを作って更新する(`map` / `filter` / スプレッド構文)。直接書き換えない
 - 完了済みの表示は `task-done` クラスの付与で切り替え、色やスタイルの指定は CSS 側に置く
 - 永続化は `storage.js` の `TaskStorage`(`load` / `save`)に閉じ込める。キーは `task-board:tasks`

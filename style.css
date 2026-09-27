@@ -54,7 +54,10 @@ body {
 }
 
 .add-button,
-.delete-button {
+.edit-button,
+.delete-button,
+.save-button,
+.cancel-button {
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -106,6 +109,24 @@ body {
   text-decoration: line-through;
 }
 
+/* 編集・削除ボタン */
+.task-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.edit-button {
+  padding: 6px 12px;
+  background: #f0f1f3;
+  color: #626d79;
+}
+
+.edit-button:hover {
+  background: #e2e4e8;
+  color: var(--accent);
+}
+
 .delete-button {
   padding: 6px 12px;
   background: #f0f1f3;
@@ -115,6 +136,52 @@ body {
 .delete-button:hover {
   background: #e2e4e8;
   color: #c0392b;
+}
+
+/* 編集モード */
+.edit-form {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.edit-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  font-size: 15px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+}
+
+.edit-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.save-button {
+  padding: 6px 12px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.save-button:hover:not(:disabled) {
+  background: #2558c0;
+}
+
+.save-button:disabled {
+  background: #b5c7ef;
+  cursor: not-allowed;
+}
+
+.cancel-button {
+  padding: 6px 12px;
+  background: #f0f1f3;
+  color: #626d79;
+}
+
+.cancel-button:hover {
+  background: #e2e4e8;
 }
 
 .empty-message,
