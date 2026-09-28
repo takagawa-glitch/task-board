@@ -6,9 +6,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 task-board は、タスクを登録・管理するタスクボード(カンバン形式)のWebアプリケーションです。
 
-- 技術スタック: React 18(CDN 読み込み)+ JSX / CSS。ビルドツールとパッケージマネージャは未導入。
+- 技術スタック: React 18(CDN 読み込み)+ JSX / CSS。詳細は「技術スタック」を参照。
 - 現状: タスクの追加・編集・完了切替・削除と、localStorage への保存が実装済みです。
 - 位置づけ: `claludeCodeStudy` 配下の学習用プロジェクトです(同階層の `quiz-app` と同じ構成方針)。
+
+## デプロイ先
+
+https://takagawa-glitch.github.io/task-board/
+
+GitHub Pages で `main` ブランチのルートを公開しています。`main` に push すると自動で再公開されます(手順と注意点は「公開(GitHub Pages)」を参照)。
+
+## 技術スタック
+
+| 分類 | 採用技術 | 補足 |
+|---|---|---|
+| UI ライブラリ | React 18.3.1 / ReactDOM 18.3.1 | unpkg から UMD の本番ビルドを読み込む。`React` / `ReactDOM` はグローバル変数として使う |
+| JSX の変換 | @babel/standalone 7.29.9 | `type="text/babel"` のスクリプトをブラウザ上で変換する |
+| 言語 | JavaScript(ES2015 以降)+ JSX | TypeScript は使わない。`import` / `export` も使わない(ファイルは `<script>` タグで順番に読み込む) |
+| 状態管理 | React フック(`useState` / `useEffect` / `useRef`) | Redux などの状態管理ライブラリは使わない |
+| スタイル | 素の CSS(`style.css`) | 色は `:root` の CSS カスタムプロパティ(`--accent` など)で管理する。CSS フレームワークは使わない |
+| 永続化 | ブラウザの `localStorage` | `storage.js` の `TaskStorage` 経由でのみ読み書きする |
+| ホスティング | GitHub Pages | ビルドなしでリポジトリのファイルをそのまま配信する |
+| ビルド・パッケージ管理 | なし | `package.json` や `node_modules` は置かない |
 
 ## 開発コマンド
 
@@ -20,7 +39,7 @@ task-board は、タスクを登録・管理するタスクボード(カンバ�
 
 ## 公開(GitHub Pages)
 
-- `main` ブランチのルートをそのまま公開する(Settings → Pages → Deploy from a branch → `main` / `/ (root)`)。公開 URL: https://takagawa-glitch.github.io/task-board/
+- `main` ブランチのルートをそのまま公開する(Settings → Pages → Deploy from a branch → `main` / `/ (root)`)。URL は「デプロイ先」を参照
 - サイトは `/task-board/` というサブパスで配信されるため、ファイルの参照は必ず相対パス(`style.css` など)で書く。`/style.css` のような先頭スラッシュは使わない
 - CDN のバージョンは固定する(`react@18.3.1` / `react-dom@18.3.1` / `@babel/standalone@7.29.9`)。更新するときはローカルで動作確認してから変える
 - `.nojekyll` は Jekyll 処理を無効にするためのファイルなので消さない
@@ -53,6 +72,57 @@ style.css    スタイル定義
 - 今後の拡張方針:
   - 「未着手 / 進行中 / 完了」のような列(レーン)に広げる場合、列の定義は定数として一箇所にまとめる
   - React 以外の外部ライブラリには依存しない
+
+## コンポーネントの命名規約
+
+現在のコードで使っている命名に合わせる。新しく追加するものも同じ規則で名付ける。
+
+### コンポーネント
+
+- 名前は PascalCase の名詞にする。タスクに関わる部品は `Task` + 役割(`TaskItem` / `TaskForm`)、ルートは `App`
+  - 例: 列(レーン)を追加するなら `TaskColumn`、一覧なら `TaskList`
+- `function TaskItem(...) { ... }` の関数宣言で書き、直前に役割を1行コメントで書く
+- 子コンポーネントを先、それを使う親を後に書く(現在は `TaskItem` → `TaskForm` → `App` の順)
+
+### props
+
+- データは名詞で渡す(`task`)
+- 親の処理を呼ぶコールバックは `on` + 動詞(`onAdd` / `onEdit` / `onToggle` / `onDelete`)
+- 引数で分割代入して受け取る(`function TaskItem({ task, onToggle, onEdit, onDelete })`)
+
+### 関数
+
+| 種類 | 規則 | 例 |
+|---|---|---|
+| `App` の状態更新関数 | 動詞 + `Task` | `addTask` / `editTask` / `toggleTask` / `deleteTask` |
+| props への受け渡し | `on` + 動詞 に 状態更新関数を渡す | `onEdit={editTask}` |
+| DOM イベントのハンドラ | `handle` + イベント名 | `handleSubmit` / `handleKeyDown` |
+| コンポーネント内の UI 操作 | 動詞 + 名詞 | `startEditing` / `cancelEditing` |
+| ユーティリティ | 動詞で始める camelCase | `createId` |
+| 真偽値を返す判定 | `is` + 内容 | `isValidTask` |
+
+### state・ref・変数
+
+- state は `[値, set値]` の組にする(`[tasks, setTasks]` / `[draft, setDraft]`)
+- UI 状態の真偽値は `is` を付ける(`isEditing`)。入力途中の値は `draft`
+- ref は `〇〇Ref`(`inputRef`)
+- 計算で求められる値は state にせず、描画のたびに計算する(`doneCount`)
+- タスクデータの項目名(`id` / `title` / `done`)は localStorage に保存済みのデータと対応しているため変えない。完了フラグも `isDone` ではなく `done` のままにする
+
+### コンポーネント以外
+
+- 関数群をまとめたオブジェクトは PascalCase の名詞、メソッドは動詞(`TaskStorage.load` / `TaskStorage.save`)
+- 定数は UPPER_SNAKE_CASE(`STORAGE_KEY`)
+- localStorage のキーは `task-board:<名前>`(`task-board:tasks`)
+- ファイル名は小文字。JSX を含むファイルは `.jsx`、含まないファイルは `.js`
+
+### CSS クラス名
+
+- kebab-case で、`<対象>-<部位>` の形にする(`task-title` / `task-label` / `board-title`)
+- ボタンは `<動作>-button`(`add-button` / `edit-button` / `save-button` / `cancel-button` / `delete-button`)
+- 入力欄は `<用途>-input`、フォームは `<用途>-form`(`task-input` / `edit-input` / `task-form` / `edit-form`)
+- 状態による見た目の違いは、基本クラスに `<対象>-<状態>` を追加して表す(`task task-done` / `task task-editing`)
+- 色はクラスに直接書かず、`:root` のカスタムプロパティを参照する
 
 ## Git運用ルール
 
