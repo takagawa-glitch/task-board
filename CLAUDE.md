@@ -142,21 +142,17 @@ style.css    スタイル定義
 - 作業を中断する場合も、中断前にコミットとプッシュを済ませる
 - `.env` などの秘密情報を含むファイルはコミットしない。`.gitignore` に追加して管理する
 
-### 初回セットアップ(まだ実施していない場合)
+### リポジトリ情報
 
-このディレクトリは現時点で Git リポジトリとして初期化されていません。最初に以下を実施してください。
+- リモート: https://github.com/takagawa-glitch/task-board (公開リポジトリ)
+- ブランチ: `main` のみ。`origin/main` を追跡済みなので、`git push` だけでリモートへ反映される
+- `main` は GitHub Pages の公開元でもあるため、push した内容はそのまま公開サイトに反映される。動作確認してから push する
+- この PC には `gh` コマンドが入っていない。GitHub の設定変更(Pages など)は GitHub の Web 画面で行う
 
-```bash
-git init
-git add .
-git commit -m "初回コミット"
-gh repo create task-board --private --source=. --push
-```
-
-`gh` コマンドが使えない場合は、GitHub 上でリポジトリを作成してから以下を実行します。
+### 別の PC で作業を始める場合
 
 ```bash
-git remote add origin <リポジトリのURL>
-git branch -M main
-git push -u origin main
+git clone https://github.com/takagawa-glitch/task-board.git
+cd task-board
+python -m http.server 8000
 ```
