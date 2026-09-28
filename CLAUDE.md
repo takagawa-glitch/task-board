@@ -18,10 +18,20 @@ task-board は、タスクを登録・管理するタスクボード(カンバ�
   - `index.html` をファイルとして直接開くと、`app.jsx` の読み込みがブラウザの制限でブロックされ、画面が空になります。
 - lint/test の仕組みは未整備です。導入した場合は、実行コマンドをこのファイルに追記してください。
 
+## 公開(GitHub Pages)
+
+- `main` ブランチのルートをそのまま公開する(Settings → Pages → Deploy from a branch → `main` / `/ (root)`)。公開 URL: https://takagawa-glitch.github.io/task-board/
+- サイトは `/task-board/` というサブパスで配信されるため、ファイルの参照は必ず相対パス(`style.css` など)で書く。`/style.css` のような先頭スラッシュは使わない
+- CDN のバージョンは固定する(`react@18.3.1` / `react-dom@18.3.1` / `@babel/standalone@7.29.9`)。更新するときはローカルで動作確認してから変える
+- `.nojekyll` は Jekyll 処理を無効にするためのファイルなので消さない
+- ブラウザ上で JSX を変換しているため、コンソールに Babel の「本番ではプリコンパイルを」という警告が出るが、ビルドなし構成の仕様として許容している
+
 ## アーキテクチャ
 
 ```
 index.html   画面の骨組みと CDN(React / ReactDOM / Babel standalone)の読み込み
+README.md    アプリの説明と GitHub Pages の公開手順
+.nojekyll    GitHub Pages で Jekyll 処理を無効にする空ファイル
 storage.js   localStorage への保存・読み込み(app.jsx より先に読み込む)
 app.jsx      React コンポーネント一式(type="text/babel" で読み込まれる)
 style.css    スタイル定義

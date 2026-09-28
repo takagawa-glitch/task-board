@@ -3,17 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="タスクの追加・編集・完了切替・削除ができるシンプルなタスクボード">
   <title>タスクボード</title>
+  <!-- favicon.ico の 404 を避けるため、SVG アイコンを埋め込む -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232f6feb'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <!-- 相対パスで読み込む(GitHub Pages のサブパス /task-board/ でも動くようにするため) -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="root"></div>
 
-  <!-- React 本体(ビルドツールを使わず CDN から読み込む) -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <!-- React 本体(ビルドツールを使わず CDN から読み込む)
+       公開時に挙動が変わらないよう、バージョンは固定している -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
   <!-- JSX をブラウザ上で変換する -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.9/babel.min.js"></script>
   <!-- 永続化(localStorage)を担当する。app.jsx より先に読み込む -->
   <script src="storage.js"></script>
   <script type="text/babel" src="app.jsx"></script>
